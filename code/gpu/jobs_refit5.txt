@@ -1,0 +1,7 @@
+--arch vit_base_in21k --seed 42 --epochs 6 --save_epochs 6 --backbone_lr 3e-5 --head_lr 3e-4 --exclude ../data/flagged.csv --fold all --out ../runs_refit
+--arch deit3_base_in22k --seed 42 --epochs 6 --save_epochs 6 --backbone_lr 3e-5 --head_lr 3e-4 --exclude ../data/flagged.csv --fold all --out ../runs_refit
+--arch convnext_small_in22k --seed 42 --epochs 10 --save_epochs 10 --exclude ../data/flagged.csv --fold all --out ../runs_refit
+--arch convnextv2_tiny_in22k --seed 42 --epochs 10 --save_epochs 10 --exclude ../data/flagged.csv --fold all --out ../runs_refit
+--arch swin_small_in22k --seed 42 --epochs 8 --save_epochs 8 --backbone_lr 5e-5 --exclude ../data/flagged.csv --fold all --out ../runs_refit
+--arch vit_base_in21k --seed 7 --epochs 6 --save_epochs 6 --backbone_lr 3e-5 --head_lr 3e-4 --mosaic_max 24 --exclude ../data/flagged.csv --fold all --out ../runs_refit
+--arch convnext_small_in22k --seed 7 --epochs 10 --save_epochs 10 --mosaic_max 24 --exclude ../data/flagged.csv --fold all --out ../runs_refit

@@ -1,0 +1,36 @@
+--arch efficientnet_v2_s --seed 42 --fold 0 --epochs 12
+--arch efficientnet_v2_s --seed 42 --fold 1 --epochs 12
+--arch efficientnet_v2_s --seed 42 --fold 2 --epochs 12
+--arch efficientnet_v2_s --seed 42 --fold 3 --epochs 12
+--arch efficientnet_v2_s --seed 42 --fold 4 --epochs 12
+--arch efficientnet_v2_s --seed 42 --fold all --epochs 12 --save_epochs 4 5 6 7 8 9 10 11 12
+--arch maxvit_t --seed 42 --fold 0 --epochs 12
+--arch maxvit_t --seed 42 --fold 1 --epochs 12
+--arch maxvit_t --seed 42 --fold 2 --epochs 12
+--arch maxvit_t --seed 42 --fold 3 --epochs 12
+--arch maxvit_t --seed 42 --fold 4 --epochs 12
+--arch maxvit_t --seed 42 --fold all --epochs 12 --save_epochs 4 5 6 7 8 9 10 11 12
+--arch convnext_small --seed 7 --fold 0 --epochs 12
+--arch convnext_small --seed 7 --fold 1 --epochs 12
+--arch convnext_small --seed 7 --fold 2 --epochs 12
+--arch convnext_small --seed 7 --fold 3 --epochs 12
+--arch convnext_small --seed 7 --fold 4 --epochs 12
+--arch convnext_small --seed 7 --fold all --epochs 12 --save_epochs 4 5 6 7 8 9 10 11 12
+--arch swin_t --seed 7 --fold 0 --epochs 12
+--arch swin_t --seed 7 --fold 1 --epochs 12
+--arch swin_t --seed 7 --fold 2 --epochs 12
+--arch swin_t --seed 7 --fold 3 --epochs 12
+--arch swin_t --seed 7 --fold 4 --epochs 12
+--arch swin_t --seed 7 --fold all --epochs 12 --save_epochs 4 5 6 7 8 9 10 11 12
+--arch resnet50 --seed 7 --fold 0 --epochs 12
+--arch resnet50 --seed 7 --fold 1 --epochs 12
+--arch resnet50 --seed 7 --fold 2 --epochs 12
+--arch resnet50 --seed 7 --fold 3 --epochs 12
+--arch resnet50 --seed 7 --fold 4 --epochs 12
+--arch resnet50 --seed 7 --fold all --epochs 12 --save_epochs 4 5 6 7 8 9 10 11 12
+--arch convnext_tiny --seed 7 --fold 0 --epochs 12
+--arch convnext_tiny --seed 7 --fold 1 --epochs 12
+--arch convnext_tiny --seed 7 --fold 2 --epochs 12
+--arch convnext_tiny --seed 7 --fold 3 --epochs 12
+--arch convnext_tiny --seed 7 --fold 4 --epochs 12
+--arch convnext_tiny --seed 7 --fold all --epochs 12 --save_epochs 4 5 6 7 8 9 10 11 12

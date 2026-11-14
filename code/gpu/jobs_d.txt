@@ -1,0 +1,75 @@
+--arch convnext_small --seed 7 --fold 0 --epochs 12 --stop 8 --robust --out ../runs_robust
+--arch convnext_small --seed 7 --fold 1 --epochs 12 --stop 8 --robust --out ../runs_robust
+--arch convnext_small --seed 7 --fold 2 --epochs 12 --stop 8 --robust --out ../runs_robust
+--arch convnext_small --seed 7 --fold 3 --epochs 12 --stop 8 --robust --out ../runs_robust
+--arch convnext_small --seed 7 --fold 4 --epochs 12 --stop 8 --robust --out ../runs_robust
+--arch convnext_small --seed 7 --fold 0 --epochs 12 --stop 8 --robust --exclude ../data/flagged.csv --out ../runs_clean
+--arch convnext_small --seed 7 --fold 1 --epochs 12 --stop 8 --robust --exclude ../data/flagged.csv --out ../runs_clean
+--arch convnext_small --seed 7 --fold 2 --epochs 12 --stop 8 --robust --exclude ../data/flagged.csv --out ../runs_clean
+--arch convnext_small --seed 7 --fold 3 --epochs 12 --stop 8 --robust --exclude ../data/flagged.csv --out ../runs_clean
+--arch convnext_small --seed 7 --fold 4 --epochs 12 --stop 8 --robust --exclude ../data/flagged.csv --out ../runs_clean
+--arch efficientnet_v2_s --seed 42 --fold 0 --epochs 12 --stop 11 --robust --out ../runs_robust
+--arch efficientnet_v2_s --seed 42 --fold 1 --epochs 12 --stop 11 --robust --out ../runs_robust
+--arch efficientnet_v2_s --seed 42 --fold 2 --epochs 12 --stop 11 --robust --out ../runs_robust
+--arch efficientnet_v2_s --seed 42 --fold 3 --epochs 12 --stop 11 --robust --out ../runs_robust
+--arch efficientnet_v2_s --seed 42 --fold 4 --epochs 12 --stop 11 --robust --out ../runs_robust
+--arch efficientnet_v2_s --seed 42 --fold 0 --epochs 12 --stop 11 --robust --exclude ../data/flagged.csv --out ../runs_clean
+--arch efficientnet_v2_s --seed 42 --fold 1 --epochs 12 --stop 11 --robust --exclude ../data/flagged.csv --out ../runs_clean
+--arch efficientnet_v2_s --seed 42 --fold 2 --epochs 12 --stop 11 --robust --exclude ../data/flagged.csv --out ../runs_clean
+--arch efficientnet_v2_s --seed 42 --fold 3 --epochs 12 --stop 11 --robust --exclude ../data/flagged.csv --out ../runs_clean
+--arch efficientnet_v2_s --seed 42 --fold 4 --epochs 12 --stop 11 --robust --exclude ../data/flagged.csv --out ../runs_clean
+--arch swin_t --seed 7 --fold 0 --epochs 12 --stop 10 --robust --out ../runs_robust
+--arch swin_t --seed 7 --fold 1 --epochs 12 --stop 10 --robust --out ../runs_robust
+--arch swin_t --seed 7 --fold 2 --epochs 12 --stop 10 --robust --out ../runs_robust
+--arch swin_t --seed 7 --fold 3 --epochs 12 --stop 10 --robust --out ../runs_robust
+--arch swin_t --seed 7 --fold 4 --epochs 12 --stop 10 --robust --out ../runs_robust
+--arch swin_t --seed 7 --fold 0 --epochs 12 --stop 10 --robust --exclude ../data/flagged.csv --out ../runs_clean
+--arch swin_t --seed 7 --fold 1 --epochs 12 --stop 10 --robust --exclude ../data/flagged.csv --out ../runs_clean
+--arch swin_t --seed 7 --fold 2 --epochs 12 --stop 10 --robust --exclude ../data/flagged.csv --out ../runs_clean
+--arch swin_t --seed 7 --fold 3 --epochs 12 --stop 10 --robust --exclude ../data/flagged.csv --out ../runs_clean
+--arch swin_t --seed 7 --fold 4 --epochs 12 --stop 10 --robust --exclude ../data/flagged.csv --out ../runs_clean
+--arch convnext_tiny --seed 7 --fold 0 --epochs 12 --stop 8 --robust --out ../runs_robust
+--arch convnext_tiny --seed 7 --fold 1 --epochs 12 --stop 8 --robust --out ../runs_robust
+--arch convnext_tiny --seed 7 --fold 2 --epochs 12 --stop 8 --robust --out ../runs_robust
+--arch convnext_tiny --seed 7 --fold 3 --epochs 12 --stop 8 --robust --out ../runs_robust
+--arch convnext_tiny --seed 7 --fold 4 --epochs 12 --stop 8 --robust --out ../runs_robust
+--arch convnext_tiny --seed 7 --fold 0 --epochs 12 --stop 8 --robust --exclude ../data/flagged.csv --out ../runs_clean
+--arch convnext_tiny --seed 7 --fold 1 --epochs 12 --stop 8 --robust --exclude ../data/flagged.csv --out ../runs_clean
+--arch convnext_tiny --seed 7 --fold 2 --epochs 12 --stop 8 --robust --exclude ../data/flagged.csv --out ../runs_clean
+--arch convnext_tiny --seed 7 --fold 3 --epochs 12 --stop 8 --robust --exclude ../data/flagged.csv --out ../runs_clean
+--arch convnext_tiny --seed 7 --fold 4 --epochs 12 --stop 8 --robust --exclude ../data/flagged.csv --out ../runs_clean
+--arch resnet50 --seed 42 --fold 0 --epochs 12 --stop 9 --robust --out ../runs_robust
+--arch resnet50 --seed 42 --fold 1 --epochs 12 --stop 9 --robust --out ../runs_robust
+--arch resnet50 --seed 42 --fold 2 --epochs 12 --stop 9 --robust --out ../runs_robust
+--arch resnet50 --seed 42 --fold 3 --epochs 12 --stop 9 --robust --out ../runs_robust
+--arch resnet50 --seed 42 --fold 4 --epochs 12 --stop 9 --robust --out ../runs_robust
+--arch resnet50 --seed 42 --fold 0 --epochs 12 --stop 9 --robust --exclude ../data/flagged.csv --out ../runs_clean
+--arch resnet50 --seed 42 --fold 1 --epochs 12 --stop 9 --robust --exclude ../data/flagged.csv --out ../runs_clean
+--arch resnet50 --seed 42 --fold 2 --epochs 12 --stop 9 --robust --exclude ../data/flagged.csv --out ../runs_clean
+--arch resnet50 --seed 42 --fold 3 --epochs 12 --stop 9 --robust --exclude ../data/flagged.csv --out ../runs_clean
+--arch resnet50 --seed 42 --fold 4 --epochs 12 --stop 9 --robust --exclude ../data/flagged.csv --out ../runs_clean
+--arch convnext_small --seed 7 --fold 0 --epochs 12 --stop 8 --exclude ../data/random_drop.csv --out ../runs_randdrop
+--arch convnext_small --seed 7 --fold 1 --epochs 12 --stop 8 --exclude ../data/random_drop.csv --out ../runs_randdrop
+--arch convnext_small --seed 7 --fold 2 --epochs 12 --stop 8 --exclude ../data/random_drop.csv --out ../runs_randdrop
+--arch convnext_small --seed 7 --fold 3 --epochs 12 --stop 8 --exclude ../data/random_drop.csv --out ../runs_randdrop
+--arch convnext_small --seed 7 --fold 4 --epochs 12 --stop 8 --exclude ../data/random_drop.csv --out ../runs_randdrop
+--arch efficientnet_v2_s --seed 42 --fold 0 --epochs 12 --stop 11 --exclude ../data/random_drop.csv --out ../runs_randdrop
+--arch efficientnet_v2_s --seed 42 --fold 1 --epochs 12 --stop 11 --exclude ../data/random_drop.csv --out ../runs_randdrop
+--arch efficientnet_v2_s --seed 42 --fold 2 --epochs 12 --stop 11 --exclude ../data/random_drop.csv --out ../runs_randdrop
+--arch efficientnet_v2_s --seed 42 --fold 3 --epochs 12 --stop 11 --exclude ../data/random_drop.csv --out ../runs_randdrop
+--arch efficientnet_v2_s --seed 42 --fold 4 --epochs 12 --stop 11 --exclude ../data/random_drop.csv --out ../runs_randdrop
+--arch convnext_tiny --seed 7 --fold 0 --epochs 12 --stop 8 --train_frac 0.25 --out ../runs_frac25
+--arch convnext_tiny --seed 7 --fold 1 --epochs 12 --stop 8 --train_frac 0.25 --out ../runs_frac25
+--arch convnext_tiny --seed 7 --fold 2 --epochs 12 --stop 8 --train_frac 0.25 --out ../runs_frac25
+--arch convnext_tiny --seed 7 --fold 3 --epochs 12 --stop 8 --train_frac 0.25 --out ../runs_frac25
+--arch convnext_tiny --seed 7 --fold 4 --epochs 12 --stop 8 --train_frac 0.25 --out ../runs_frac25
+--arch convnext_tiny --seed 7 --fold 0 --epochs 12 --stop 8 --train_frac 0.5 --out ../runs_frac50
+--arch convnext_tiny --seed 7 --fold 1 --epochs 12 --stop 8 --train_frac 0.5 --out ../runs_frac50
+--arch convnext_tiny --seed 7 --fold 2 --epochs 12 --stop 8 --train_frac 0.5 --out ../runs_frac50
+--arch convnext_tiny --seed 7 --fold 3 --epochs 12 --stop 8 --train_frac 0.5 --out ../runs_frac50
+--arch convnext_tiny --seed 7 --fold 4 --epochs 12 --stop 8 --train_frac 0.5 --out ../runs_frac50
+--arch convnext_tiny --seed 7 --fold 0 --epochs 12 --stop 8 --train_frac 0.75 --out ../runs_frac75
+--arch convnext_tiny --seed 7 --fold 1 --epochs 12 --stop 8 --train_frac 0.75 --out ../runs_frac75
+--arch convnext_tiny --seed 7 --fold 2 --epochs 12 --stop 8 --train_frac 0.75 --out ../runs_frac75
+--arch convnext_tiny --seed 7 --fold 3 --epochs 12 --stop 8 --train_frac 0.75 --out ../runs_frac75
+--arch convnext_tiny --seed 7 --fold 4 --epochs 12 --stop 8 --train_frac 0.75 --out ../runs_frac75

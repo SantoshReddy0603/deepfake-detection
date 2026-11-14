@@ -1,0 +1,30 @@
+--arch convnext_small --fold 0 --epochs 12
+--arch convnext_small --fold 1 --epochs 12
+--arch convnext_small --fold 2 --epochs 12
+--arch convnext_small --fold 3 --epochs 12
+--arch convnext_small --fold 4 --epochs 12
+--arch swin_t --fold 0 --epochs 12
+--arch swin_t --fold 1 --epochs 12
+--arch swin_t --fold 2 --epochs 12
+--arch swin_t --fold 3 --epochs 12
+--arch swin_t --fold 4 --epochs 12
+--arch resnet50 --fold 0 --epochs 12
+--arch resnet50 --fold 1 --epochs 12
+--arch resnet50 --fold 2 --epochs 12
+--arch resnet50 --fold 3 --epochs 12
+--arch resnet50 --fold 4 --epochs 12
+--arch convnext_tiny --fold 0 --epochs 12
+--arch convnext_tiny --fold 1 --epochs 12
+--arch convnext_tiny --fold 2 --epochs 12
+--arch convnext_tiny --fold 3 --epochs 12
+--arch convnext_tiny --fold 4 --epochs 12
+--arch efficientnet_b0 --fold 0 --epochs 12
+--arch efficientnet_b0 --fold 1 --epochs 12
+--arch efficientnet_b0 --fold 2 --epochs 12
+--arch efficientnet_b0 --fold 3 --epochs 12
+--arch efficientnet_b0 --fold 4 --epochs 12
+--arch convnext_small --fold all --epochs 12 --save_epochs 4 5 6 7 8 9 10 11 12
+--arch swin_t --fold all --epochs 12 --save_epochs 4 5 6 7 8 9 10 11 12
+--arch resnet50 --fold all --epochs 12 --save_epochs 4 5 6 7 8 9 10 11 12
+--arch convnext_tiny --fold all --epochs 12 --save_epochs 4 5 6 7 8 9 10 11 12
+--arch efficientnet_b0 --fold all --epochs 12 --save_epochs 4 5 6 7 8 9 10 11 12

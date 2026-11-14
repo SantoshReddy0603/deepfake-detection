@@ -1,0 +1,5 @@
+--arch convnext_small --seed 7 --fold all --epochs 12 --stop 8 --save_epochs 8 --exclude ../data/flagged.csv --out ../runs_refitclean
+--arch efficientnet_v2_s --seed 42 --fold all --epochs 12 --stop 11 --save_epochs 11 --exclude ../data/flagged.csv --out ../runs_refitclean
+--arch swin_t --seed 7 --fold all --epochs 12 --stop 10 --save_epochs 10 --exclude ../data/flagged.csv --out ../runs_refitclean
+--arch convnext_tiny --seed 7 --fold all --epochs 12 --stop 8 --save_epochs 8 --exclude ../data/flagged.csv --out ../runs_refitclean
+--arch resnet50 --seed 42 --fold all --epochs 12 --stop 9 --save_epochs 9 --exclude ../data/flagged.csv --out ../runs_refitclean
