@@ -18,10 +18,33 @@ TIMM_ARCHITECTURES = {
     "convnext_small_in22k": "convnext_small.fb_in22k_ft_in1k",
     "convnextv2_tiny_in22k": "convnextv2_tiny.fcmae_ft_in22k_in1k",
     "swin_small_in22k": "swin_small_patch4_window7_224.ms_in22k_ft_in1k",
+    "convnext_base_in22k": "convnext_base.fb_in22k_ft_in1k",
+}
+# ImageNet backbones fine-tuned at a higher resolution: the 224 px input is upsampled inside the model,
+# so the bundle, preprocessing and inference script stay unchanged.
+UPSAMPLED_ARCHITECTURES = {
+    "convnext_small_in22k_384": ("convnext_small.fb_in22k_ft_in1k_384", 384),
+    "convnextv2_tiny_in22k_384": ("convnextv2_tiny.fcmae_ft_in22k_in1k_384", 384),
+    "convnext_base_in22k_384": ("convnext_base.fb_in22k_ft_in1k_384", 384),
+    "efficientnetv2_m_in21k_384": ("tf_efficientnetv2_m.in21k_ft_in1k", 384),
+    "efficientnetv2_m_in21k_320": ("tf_efficientnetv2_m.in21k_ft_in1k", 320),
 }
 ARCHITECTURES = (LEGACY_ARCHITECTURES + ("convnext_small", "resnet50", "swin_t", "efficientnet_v2_s", "maxvit_t")
-                 + tuple(TIMM_ARCHITECTURES))
+                 + tuple(TIMM_ARCHITECTURES) + tuple(UPSAMPLED_ARCHITECTURES))
 TTA_VIEWS = ["identity", "hflip"]
+
+
+class Upsampled(nn.Module):
+    """Resizes the normalized 224 px batch to the backbone's fine-tuning resolution, then classifies it."""
+
+    def __init__(self, net, size):
+        super().__init__()
+        self.net, self.size = net, int(size)
+
+    def forward(self, x):
+        if x.shape[-1] != self.size or x.shape[-2] != self.size:
+            x = nn.functional.interpolate(x, size=(self.size, self.size), mode="bicubic", align_corners=False)
+        return self.net(x)
 
 
 def build_model(architecture, pretrained=False, dropout=0.2, initialization_path=None):
@@ -31,6 +54,10 @@ def build_model(architecture, pretrained=False, dropout=0.2, initialization_path
         raise ValueError("Choose an attached initialization file or a download, never both")
     if initialization_path is not None and architecture not in LEGACY_ARCHITECTURES:
         raise ValueError("Attached initialization files exist only for ConvNeXt-Tiny and EfficientNet-B0")
+    if architecture in UPSAMPLED_ARCHITECTURES:
+        import timm
+        name, size = UPSAMPLED_ARCHITECTURES[architecture]
+        return Upsampled(timm.create_model(name, pretrained=pretrained, num_classes=1, drop_rate=dropout), size)
     if architecture in TIMM_ARCHITECTURES:
         try:
             import timm
@@ -81,6 +108,8 @@ def build_model(architecture, pretrained=False, dropout=0.2, initialization_path
 
 def head_parameters(model):
     """Parameters of the replaced binary head, whatever the backbone family."""
+    if isinstance(model, Upsampled):
+        model = model.net
     if hasattr(model, "get_classifier") and hasattr(model, "default_cfg"):
         return list(model.get_classifier().parameters())
     for name in ("classifier", "fc", "head"):

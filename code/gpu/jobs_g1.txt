@@ -1,0 +1,10 @@
+--arch convnext_small_in22k_384 --seed 42 --fold 0 --epochs 10 --mosaic_max 24 --grad_checkpoint --robust --exclude ../data/flagged.csv --out ../runs_g
+--arch efficientnetv2_m_in21k_384 --seed 42 --fold 0 --epochs 12 --grad_checkpoint --robust --exclude ../data/flagged.csv --out ../runs_g
+--arch convnext_small_in22k_384 --seed 42 --fold 1 --epochs 10 --mosaic_max 24 --grad_checkpoint --robust --exclude ../data/flagged.csv --out ../runs_g
+--arch efficientnetv2_m_in21k_384 --seed 42 --fold 1 --epochs 12 --grad_checkpoint --robust --exclude ../data/flagged.csv --out ../runs_g
+--arch convnext_small_in22k_384 --seed 42 --fold 2 --epochs 10 --mosaic_max 24 --grad_checkpoint --robust --exclude ../data/flagged.csv --out ../runs_g
+--arch efficientnetv2_m_in21k_384 --seed 42 --fold 2 --epochs 12 --grad_checkpoint --robust --exclude ../data/flagged.csv --out ../runs_g
+--arch convnext_small_in22k_384 --seed 42 --fold 3 --epochs 10 --mosaic_max 24 --grad_checkpoint --robust --exclude ../data/flagged.csv --out ../runs_g
+--arch efficientnetv2_m_in21k_384 --seed 42 --fold 3 --epochs 12 --grad_checkpoint --robust --exclude ../data/flagged.csv --out ../runs_g
+--arch convnext_small_in22k_384 --seed 42 --fold 4 --epochs 10 --mosaic_max 24 --grad_checkpoint --robust --exclude ../data/flagged.csv --out ../runs_g
+--arch efficientnetv2_m_in21k_384 --seed 42 --fold 4 --epochs 12 --grad_checkpoint --robust --exclude ../data/flagged.csv --out ../runs_g

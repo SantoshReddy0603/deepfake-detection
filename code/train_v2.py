@@ -129,6 +129,7 @@ def main(argv=None):
     p.add_argument("--robust", action="store_true", help="after the last epoch, score the held-out fold "
                    "under every degradation condition")
     p.add_argument("--keep_conflicts", action="store_true", help="train on mixed-label groups too")
+    p.add_argument("--grad_checkpoint", action="store_true", help="timm gradient checkpointing (less memory)")
     p.add_argument("--workers", type=int, default=8)
     p.add_argument("--seed", type=int, default=42)
     p.add_argument("--limit", type=int, default=0, help="smoke test: use only this many images")
@@ -177,6 +178,8 @@ def main(argv=None):
     out.mkdir(parents=True, exist_ok=True)
 
     model = build_model(a.arch, pretrained=True, dropout=a.dropout).to(device).to(memory_format=torch.channels_last)
+    if a.grad_checkpoint:
+        (model.net if hasattr(model, "net") else model).set_grad_checkpointing(True)
     head = head_parameters(model)
     head_ids = {id(t) for t in head}
     optimizer = torch.optim.AdamW([
@@ -214,6 +217,8 @@ def main(argv=None):
             ema.update(model)
             total += loss.item()
         record = {"epoch": epoch, "train_loss": total / steps, "seconds": round(time.time() - started, 1)}
+        if device.type == "cuda":
+            record["peak_mb"] = round(torch.cuda.max_memory_allocated() / 2**20)
         if val_loader:
             logits = predict_logits(ema.model, val_loader, device)
             oof[f"e{epoch}"] = logits

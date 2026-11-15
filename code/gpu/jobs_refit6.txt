@@ -1,0 +1,2 @@
+--arch convnext_small_in22k_384 --seed 42 --epochs 10 --save_epochs 10 --mosaic_max 24 --grad_checkpoint --exclude ../data/flagged.csv --fold all --out ../runs_refit6
+--arch convnext_small_in22k_384 --seed 7 --epochs 10 --save_epochs 10 --grad_checkpoint --exclude ../data/flagged.csv --fold all --out ../runs_refit6

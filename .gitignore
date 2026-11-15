@@ -1,11 +1,8 @@
 __pycache__/
 *.pyc
-.build/
-.claude/
-CLAUDE.md
-AGENTS.md
 *.xlsx
 kaggle_upload/
 DeepfakeDetector_v5/
+DeepfakeDetector_v6/
 *.pt
 *.zip

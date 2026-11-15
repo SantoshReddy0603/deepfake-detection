@@ -1,6 +1,6 @@
 # Deepfake Detection
 
-Image deepfake detector for 224x224 face crops. The final model is a six-member ensemble of ImageNet-pretrained backbones from five architecture families:
+Image deepfake detector for 224x224 face crops. The final model is a seven-member ensemble of ImageNet-pretrained backbones from five architecture families:
 
 | Member | Family | Pretraining | Params (M) |
 |---|---|---|---:|
@@ -10,8 +10,9 @@ Image deepfake detector for 224x224 face crops. The final model is a six-member 
 | ConvNeXtV2-T | CNN, FCMAE pretraining | ImageNet-22k | 27.9 |
 | ConvNeXt-S (a) | CNN, large kernel | ImageNet-22k | 49.5 |
 | ConvNeXt-S (b) | CNN, large kernel | ImageNet-22k | 49.5 |
+| ConvNeXt-S 384 | CNN, large kernel, input upsampled to 384 px | ImageNet-22k, fine-tuned at 384 | 49.5 |
 
-Each member scores the image and its horizontal flip. The twelve logits are averaged, and a sigmoid of that mean gives the fake probability.
+The 384 member resizes the 224 px input to 384 px (bicubic) inside the network, so preprocessing is the same for every member. Each member scores the image and its horizontal flip. The fourteen logits are averaged, and a sigmoid of that mean gives the fake probability.
 
 - **Pretraining:** only public ImageNet classification weights are used. No deepfake-specific detector and no web-scale image-text model.
 - **Label noise:** the members are trained without 622 images whose labels the models consistently disagree with. The [label-noise study](#label-noise-study) explains why.
@@ -25,17 +26,22 @@ All scores below are out-of-fold (OOF): every one of the 7,000 training images i
 
 | System | Members | OOF AUC | Mean of 16 degradations | Pixelation mean |
 |---|---:|---:|---:|---:|
-| **Final ensemble (v5)** | 6 | **0.91157** | **0.9102** | **0.8006** |
+| **Final ensemble (v6)** | 7 | **0.91220** | **0.9108** | **0.8018** |
+| v6 plus a second ConvNeXt-S 384 seed (not shipped, see below) | 8 | 0.91242 | 0.9110 | 0.8035 |
+| Previous ensemble (v5), same members without the 384 px model | 6 | 0.91157 | 0.9102 | 0.8006 |
 | Previous ensemble (v4), torchvision ImageNet-1k backbones | 5 | 0.90934 | 0.9074 | 0.7819 |
 | All twelve v5 candidate configurations, no selection | 12 | 0.91045 | 0.9091 | 0.7978 |
 | v4 backbones trained on all labels (v3) | 5 | 0.90792 | 0.9058 | 0.7715 |
 | First submission (ConvNeXt-T + EfficientNet-B0, 3-fold OOF) | 2 | 0.90116 | 0.8982 | not measured |
 
 - **Scored on all labels:** the suspect images are left out of training only. They are still scored with their given labels, so every row is measured on the same 7,000 labels.
-- **Gain over v4:** +0.0022 AUC, 95% paired-bootstrap interval [+0.0005, +0.0040]. The gain is positive on all five folds (+0.0014 to +0.0038).
-- **Robustness gain over v4:** +0.0028 on the 16-condition mean, interval [+0.0012, +0.0042], and +0.019 on pixelation.
-- **Selection check:** the members were chosen on the same OOF predictions they are scored on. When the selection is repeated inside four folds and scored on the fifth, the result is 0.9089, level with v4 (difference -0.0004, interval [-0.0028, +0.0020]). The clean-AUC gain is therefore small and uncertain; the robustness gain is the firmer result.
-- **Labels at threshold 0.5:** OOF accuracy 0.876 and F1 0.879. No threshold is fitted.
+- **Gain over v5:** +0.0006 AUC, 95% paired-bootstrap interval [+0.0002, +0.0010]. The gain is positive on all five folds (+0.0002 to +0.0014). The 16-condition mean gains +0.0006, interval [+0.0003, +0.0010], and the pixelation mean gains +0.001. v6 is ahead of v5 on 18 of 19 robustness rows; 24 px pixelation is 0.002 lower.
+- **How v6 was chosen:** the six v5 members were kept unchanged. Three new architectures (four runs) were trained in full 5-fold CV and a model was added only if its paired-bootstrap interval was above zero with no robustness loss. Both ConvNeXt-S 384 seeds passed; EfficientNetV2-M at 384 px (0.9112 with v5) and ConvNeXt-B 22k at 224 px (0.9117) did not.
+- **Why one 384 member, not two:** the second seed adds only +0.0002 AUC but costs 29 s more on the RTX 4060 Ti (121.5 s against 92.5 s). That would put the projected T4 time near the 5-minute efficiency limit, so the stronger single seed (s7) is shipped. Replacing v5 members with new ones looked better on OOF (0.9128) but fell to 0.9106 when the choice was repeated inside four folds and scored on the fifth, so no member was replaced.
+- **Gain of v5 over v4:** +0.0022 AUC, 95% paired-bootstrap interval [+0.0005, +0.0040]. The gain is positive on all five folds (+0.0014 to +0.0038).
+- **Robustness gain of v5 over v4:** +0.0028 on the 16-condition mean, interval [+0.0012, +0.0042], and +0.019 on pixelation.
+- **Selection check for v5:** the v5 members were chosen on the same OOF predictions they are scored on. When the selection is repeated inside four folds and scored on the fifth, the result is 0.9089, level with v4 (difference -0.0004, interval [-0.0028, +0.0020]). The clean-AUC gain is therefore small and uncertain; the robustness gain is the firmer result.
+- **Labels at threshold 0.5:** OOF accuracy 0.875 and F1 0.879. No threshold is fitted.
 - **Scope:** these are validation results. The private-test AUC is unknown.
 
 Single members (pooled 5-fold OOF AUC at the saved epoch):
@@ -48,13 +54,15 @@ Single members (pooled 5-fold OOF AUC at the saved epoch):
 | ConvNeXtV2-T (22k) s42 | 10 | 0.9062 | 0.9049 | 0.7839 |
 | ConvNeXt-S (22k) s7, mosaic 4-24 px | 10 | 0.9065 | 0.9047 | 0.8035 |
 | ConvNeXt-S (22k) s42 | 10 | 0.9057 | 0.9033 | 0.7854 |
+| ConvNeXt-S (22k, 384 px) s7 | 10 | 0.9093 | 0.9071 | 0.7834 |
 
-Ensemble OOF AUC as the members are added in that order: 0.9070, 0.9083, 0.9098, 0.9109, 0.9115, 0.9116.
+Ensemble OOF AUC as the members are added in that order: 0.9070, 0.9083, 0.9098, 0.9109, 0.9115, 0.9116, 0.9122. The 384 px member is the strongest single model.
 
-Trained and left out: DeiT-III-B (0.9037), Swin-S 22k (0.9012), ViT-B with 4-24 px mosaic (0.9051), and the v4 members ConvNeXt-S and ConvNeXt-T with ImageNet-1k weights (0.9056, 0.9062) and ResNet-50 (0.9038). None improved the six-member set on both clean and degraded data.
+Trained and left out: a second ConvNeXt-S 384 seed (0.9079, left out for runtime), EfficientNetV2-M 21k at 384 px (0.9060), ConvNeXt-B 22k (0.9062), DeiT-III-B (0.9037), Swin-S 22k (0.9012), ViT-B with 4-24 px mosaic (0.9051), and the v4 members ConvNeXt-S and ConvNeXt-T with ImageNet-1k weights (0.9056, 0.9062) and ResNet-50 (0.9038). None improved the ensemble on both clean and degraded data.
 
 ## Training recipe (`code/train_v2.py`)
 
+- **384 px member:** timm `convnext_small.fb_in22k_ft_in1k_384` weights, input upsampled from 224 to 384 px inside the model, gradient checkpointing during training.
 - **Augmentation:** JPEG re-compression, blur, noise, down/up-scaling, colour jitter, plus mosaic/pixelation with p = 0.5 and blocks of 4 to 16 px (4 to 24 px for one ConvNeXt-S member).
 - **Optimiser and loss:**
   - AdamW with backbone learning rate 1e-4, head learning rate 5e-4 and weight decay 0.05 (ViT-B: 3e-5 and 3e-4);
@@ -107,21 +115,21 @@ The study was run on the previous five-member ensemble (v3 trained on all labels
 
 Every member scored its held-out fold under 16 degradations, plus three harsher pixelation levels. Each degradation is seeded per image, so every model sees the same degraded pixels. The table shows pooled 5-fold OOF AUC on all 7,000 images, with flip TTA.
 
-| Condition | v5 (final) | v4 |
-|---|---:|---:|
-| clean | 0.9116 | 0.9093 |
-| JPEG q30 / q50 / q70 | 0.9101 / 0.9112 / 0.9111 | 0.9070 / 0.9085 / 0.9084 |
-| blur r1 / r2 | 0.9110 / 0.9068 | 0.9083 / 0.9034 |
-| noise 5 / 10 | 0.9113 / 0.9110 | 0.9083 / 0.9079 |
-| downscale 112 / 160 | 0.9103 / 0.9112 | 0.9073 / 0.9084 |
-| brightness 0.8 / 1.2 | 0.9116 / 0.9109 | 0.9092 / 0.9088 |
-| contrast 0.8 / 1.2 | 0.9115 / 0.9113 | 0.9092 / 0.9094 |
-| centre crop 0.8 | 0.9082 | 0.9057 |
-| combined (JPEG + blur + noise + downscale) | 0.9042 | 0.8995 |
-| **Mean of the 16 conditions above** | **0.9102** | 0.9074 |
-| pixelate 8 / 16 / 24 px | 0.8759 / 0.7966 / 0.7295 | 0.8630 / 0.7769 / 0.7059 |
+| Condition | v6 (final) | v5 | v4 |
+|---|---:|---:|---:|
+| clean | 0.9122 | 0.9116 | 0.9093 |
+| JPEG q30 / q50 / q70 | 0.9108 / 0.9118 / 0.9118 | 0.9101 / 0.9112 / 0.9111 | 0.9070 / 0.9085 / 0.9084 |
+| blur r1 / r2 | 0.9116 / 0.9075 | 0.9110 / 0.9068 | 0.9083 / 0.9034 |
+| noise 5 / 10 | 0.9119 / 0.9117 | 0.9113 / 0.9110 | 0.9083 / 0.9079 |
+| downscale 112 / 160 | 0.9109 / 0.9118 | 0.9103 / 0.9112 | 0.9073 / 0.9084 |
+| brightness 0.8 / 1.2 | 0.9122 / 0.9115 | 0.9116 / 0.9109 | 0.9092 / 0.9088 |
+| contrast 0.8 / 1.2 | 0.9121 / 0.9120 | 0.9115 / 0.9113 | 0.9092 / 0.9094 |
+| centre crop 0.8 | 0.9086 | 0.9082 | 0.9057 |
+| combined (JPEG + blur + noise + downscale) | 0.9049 | 0.9042 | 0.8995 |
+| **Mean of the 16 conditions above** | **0.9108** | 0.9102 | 0.9074 |
+| pixelate 8 / 16 / 24 px | 0.8775 / 0.8006 / 0.7271 | 0.8759 / 0.7966 / 0.7295 | 0.8630 / 0.7769 / 0.7059 |
 
-- **Ahead everywhere:** v5 scores higher than v4 on all 19 rows.
+- **Ahead almost everywhere:** v6 scores higher than v5 on 18 of 19 rows (24 px pixelation is 0.002 lower), and v5 higher than v4 on all 19.
 - **Worst of the 16:** the combined degradation, which costs 0.007 AUC.
 - **Pixelation:** strong pixelation is still the clear weak point, even with mosaic augmentation. At 24 px blocks most facial detail is gone.
 - **Full table:** per-member numbers are in `robustness_table.csv` next to the bundle.
@@ -143,12 +151,11 @@ python code/inference_script.py --test_dir "C:\path\to\images" --weights "C:\pat
   - Unreadable images get a warning and confidence 0.5.
   - A CUDA out-of-memory error halves the batch size and retries.
   - Inference needs no network or training data.
-- **Dependencies:** `timm` builds four of the six backbones. It is listed in `requirements.txt`, and nothing is downloaded at inference.
-- **Bundle:** 522 MB, format 3, fp16 weights and plain tensors only.
+- **Dependencies:** `timm` builds five of the seven backbones. It is listed in `requirements.txt`, and nothing is downloaded at inference.
+- **Bundle:** 621 MB, format 3, fp16 weights and plain tensors only.
 - **Runtime:**
-  - Fresh process, 3,000 test images on an RTX 4060 Ti: 59 s, including model load and CSV writing, with peak CUDA memory of 2.5 GB.
-  - Tesla T4 (Kaggle), same command, three fresh runs: 124 s, 111 s and 108 s wall clock, with peak CUDA memory of 2.2 GB. The first run includes the first read of the files from disk. All are inside the 5-minute limit.
-  - The T4 output matches the submitted `predictions.csv` on all 3,000 images: no label differences, maximum confidence difference 0.0006.
+  - Fresh process, 3,000 test images on an RTX 4060 Ti: 92.5 s, including model load and CSV writing, with peak CUDA memory of 3.7 GB.
+  - Tesla T4 (Kaggle), estimated 165 to 195 s. The estimate uses the measured T4/4060 Ti ratio of the previous six-member ensemble (59 s on the 4060 Ti, 108 to 124 s on a Kaggle T4 over three fresh runs). This is inside the 5-minute limit.
 - **CPU/GPU agreement:** maximum confidence difference 0.0003 and no label flips on 32 test images.
 
 ## Grad-CAM
@@ -157,7 +164,7 @@ python code/inference_script.py --test_dir "C:\path\to\images" --weights "C:\pat
 python code/gradcam.py --weights model_weights.pt --images some_dir --out gradcam --limit 16
 ```
 
-For each image the script writes one panel: the input, then one heatmap per member. The fused probability is in the file name. The target layer is the last convolutional stage for the CNNs, the last stage for Swin-T and the token grid of the last block for ViT-B. On the test samples checked, the convolutional members and Swin-T mostly focus on the central face (eyes, nose, mouth). The ViT-B map is more diffuse.
+For each image the script writes one panel: the input, then one heatmap per member. The fused probability is in the file name. The target layer is the last convolutional stage for the CNNs (for the 384 px member, at its 384 px resolution, resized back to 224 for display), the last stage for Swin-T and the token grid of the last block for ViT-B. On the test samples checked, the convolutional members and Swin-T mostly focus on the central face (eyes, nose, mouth). The ViT-B map is more diffuse.
 
 ## TensorFlow export
 
@@ -169,8 +176,8 @@ python code/export_tf.py --weights model_weights.pt --out tf_export --check_dir 
 python code/tf_inference.py --test_dir some_dir --weights tf_export --output predictions_tf.csv
 ```
 
-- **Route:** PyTorch to ONNX (opset 17), graph simplification, then `onnx2tf`. Each member is converted in its own process to keep memory low.
-- **Parity:** `export_tf.py` compares TensorFlow and PyTorch logits on real images and writes the gaps to `tf_export/manifest.json`. For the submitted export the largest logit gap is 1.0e-05 and the largest probability gap 1.7e-07 on 32 test images; `tf_inference.py` gives the same labels as the PyTorch script on those images.
+- **Route:** PyTorch to ONNX (opset 17), graph simplification, then `onnx2tf`. Each member is converted in its own process to keep memory low. For the 384 px member the bicubic resize is exported as two fixed matrix products (PyTorch's bicubic is separable), because the converter's own bicubic kernel differs from PyTorch's.
+- **Parity:** `export_tf.py` compares TensorFlow and PyTorch logits on real images and writes the gaps to `tf_export/manifest.json`. For the submitted export the largest logit gap is 1.2e-05 and the largest probability gap 3.2e-07 on 32 test images; `tf_inference.py` gives the same labels as the PyTorch script on those images.
 - **Prediction:** `tf_inference.py` needs only TensorFlow, NumPy and Pillow. The export dependencies are not needed for the PyTorch inference script.
 
 ## Reproducing training
@@ -191,9 +198,9 @@ Other training options:
 - `--train_frac 0.5`: train on a random fraction of the training groups.
 - `--robust`: after the last epoch, score the validation fold under every degradation.
 
-Job lists in `code/gpu/`: `jobs_d.txt` holds the label-noise and robustness runs, `jobs_e.txt` the v4 refits, `jobs_f.txt` the v5 cross-validation runs and `jobs_refit5.txt` the v5 refits.
+Job lists in `code/gpu/`: `jobs_d.txt` holds the label-noise and robustness runs, `jobs_e.txt` the v4 refits, `jobs_f.txt` the v5 cross-validation runs, `jobs_refit5.txt` the v5 refits, `jobs_g*.txt` the v6 cross-validation runs and `jobs_refit6.txt` the v6 refits.
 
-`code/gpu/cluster.py` ran the training jobs on shared lab GPUs (66 jobs, then 80 for the noise and robustness study, then 67 for v5):
+`code/gpu/cluster.py` ran the training jobs on shared lab GPUs (66 jobs, then 80 for the noise and robustness study, 67 for v5, then the v6 candidate and refit runs):
 
 - **Setup:**
   - every job ran in a private work directory marked with an owner file;
@@ -201,7 +208,7 @@ Job lists in `code/gpu/`: `jobs_d.txt` holds the label-noise and robustness runs
   - jobs ran as detached queues.
 - **Cleanup:** the `cleanup` subcommand stops only our queue processes and deletes only our directory. It ran after training, and every host was checked afterwards.
 
-One fold of ConvNeXt-Small takes about 6 minutes on an RTX 4060 Ti.
+One fold of ConvNeXt-Small takes about 6 minutes on an RTX 4060 Ti at 224 px and about 14 minutes at 384 px.
 
 ## Folder contents
 
@@ -226,7 +233,7 @@ One fold of ConvNeXt-Small takes about 6 minutes on an RTX 4060 Ti.
   - `requirements.txt` (inference dependencies);
   - `LICENSE`.
 
-Images, weights, predictions and logs are not stored here. The submission files are in the `DeepfakeDetector_v5` folder shared on Google Drive:
+Images, weights, predictions and logs are not stored here. The submission files are in the `DeepfakeDetector_v6` folder shared on Google Drive:
 
 - `model_weights.pt` and `predictions.csv` for the 3,000 test images;
 - `technical_report.pdf`;
@@ -234,11 +241,9 @@ Images, weights, predictions and logs are not stored here. The submission files 
 - `noise_study.json` and `flagged.csv` (the excluded ids);
 - `gradcam/` and `tf_export/`.
 
-Earlier ensembles are in `outputs\DeepfakeDetector_v4`, `outputs\DeepfakeDetector_v3` and `outputs\DeepfakeDetector`.
-
 ## Limitations
 
 - **Label noise.** The controlled retraining in the [label-noise study](#label-noise-study) shows that the flagged images act like wrong labels. Which individual labels are wrong cannot be verified, because the fakes are not visibly fake.
-- **Selection optimism.** Members and the exclusion list were derived from OOF predictions on the same images. The nested check under [Main scores](#main-scores) shows the clean-AUC advantage over v4 is not statistically secure. The exclusion list adds a mild leak, described in the label-noise study.
+- **Selection optimism.** Members and the exclusion list were derived from OOF predictions on the same images. The nested check under [Main scores](#main-scores) shows the clean-AUC advantage of v5 over v4 is not statistically secure. The v6 addition was picked from four candidate runs, so its interval is slightly optimistic. The exclusion list adds a mild leak, described in the label-noise study.
 - **Pixelation.** AUC drops to 0.80 at 16 px blocks and to 0.73 at 24 px blocks.
 - **Unknown test variants.** Robustness was measured on our own choice of degradations; the organisers' variants may differ.

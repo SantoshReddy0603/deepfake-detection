@@ -193,7 +193,9 @@ def deploy(args):
 
 MINUTES = {"convnext_small": 25, "swin_t": 17, "convnext_tiny": 13, "resnet50": 11, "efficientnet_b0": 8,
            "efficientnet_v2_s": 16, "maxvit_t": 24, "vit_base_in21k": 18, "deit3_base_in22k": 18,
-           "convnext_small_in22k": 25, "convnextv2_tiny_in22k": 16, "swin_small_in22k": 28}
+           "convnext_small_in22k": 25, "convnextv2_tiny_in22k": 16, "swin_small_in22k": 28,
+           "convnext_base_in22k": 40, "convnext_small_in22k_384": 75, "convnextv2_tiny_in22k_384": 45,
+           "convnext_base_in22k_384": 120, "efficientnetv2_m_in21k_384": 90, "efficientnetv2_m_in21k_320": 65}
 
 
 def estimate(job):
@@ -237,6 +239,8 @@ def launch(args):
 def status(args):
     machines_all = machines(args.access)
     for i, slot in enumerate(json.loads(STATE.read_text(encoding="utf-8"))):
+        if args.ips and slot["ip"] not in args.ips:
+            continue
         with connect(machines_all[slot["key"]]) as client:
             guard(client)
             _, out, _ = run(client, f"for f in {REMOTE}/logs/queue_*.log; do grep -v '%' $f | tail -n 2; done; "

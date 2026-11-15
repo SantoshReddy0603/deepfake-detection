@@ -1,0 +1,5 @@
+--arch convnext_small_in22k_384 --seed 7 --fold 0 --epochs 10 --grad_checkpoint --robust --exclude ../data/flagged.csv --out ../runs_g
+--arch convnext_small_in22k_384 --seed 7 --fold 1 --epochs 10 --grad_checkpoint --robust --exclude ../data/flagged.csv --out ../runs_g
+--arch convnext_small_in22k_384 --seed 7 --fold 2 --epochs 10 --grad_checkpoint --robust --exclude ../data/flagged.csv --out ../runs_g
+--arch convnext_small_in22k_384 --seed 7 --fold 3 --epochs 10 --grad_checkpoint --robust --exclude ../data/flagged.csv --out ../runs_g
+--arch convnext_small_in22k_384 --seed 7 --fold 4 --epochs 10 --grad_checkpoint --robust --exclude ../data/flagged.csv --out ../runs_g

@@ -21,6 +21,13 @@ TOKEN_OUTPUT = {"vit_base_in21k", "deit3_base_in22k"}
 
 
 def target_layer(model, architecture):
+    if hasattr(model, "net"):
+        model = model.net
+        if hasattr(model, "stages"):
+            return model.stages[-1]
+        return model.conv_head
+    if architecture == "convnext_base_in22k":
+        return model.stages[-1]
     if architecture == "resnet50":
         return model.layer4
     if architecture == "maxvit_t":

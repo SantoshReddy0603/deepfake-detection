@@ -48,7 +48,29 @@ class ExportGELU(torch.nn.Module):
         return y + y * torch.erf(x * self.gelu_scale)
 
 
+class MatrixResize(torch.nn.Module):
+    """Bicubic resize written as two fixed matrix products, so it converts exactly.
+
+    PyTorch's bicubic interpolation is separable, so resizing an H x W image equals A @ x @ B.T with
+    A and B read off by resizing identity matrices. The converter's own bicubic kernel differs.
+    """
+
+    def __init__(self, net, size, source=224):
+        super().__init__()
+        eye = torch.eye(source).reshape(source, 1, source, 1)
+        rows = torch.nn.functional.interpolate(eye, size=(size, 1), mode="bicubic", align_corners=False)
+        self.register_buffer("resize_rows", rows[:, 0, :, 0].t().contiguous())
+        self.net = net
+
+    def forward(self, x):
+        x = torch.matmul(self.resize_rows, x)
+        x = torch.matmul(x, self.resize_rows.t())
+        return self.net(x)
+
+
 def make_exportable(model):
+    if type(model).__name__ == "Upsampled":
+        model = MatrixResize(model.net, model.size)
     for module in model.modules():
         for name, child in module.named_children():
             if isinstance(child, torch.nn.GELU) or type(child).__name__ == "GELU":  # timm has its own class
@@ -103,7 +125,7 @@ def convert_member(a, index, nhwc):
     nchw = torch.from_numpy(nhwc).permute(0, 3, 1, 2).contiguous()
     with torch.no_grad():
         reference = model(nchw).reshape(-1).double().numpy()
-    make_exportable(model)
+    model = make_exportable(model)
     onnx_path = out / f"{name}.onnx"
     torch.onnx.export(model, torch.zeros(1, 3, 224, 224), str(onnx_path), opset_version=a.opset,
                       input_names=["image"], output_names=["logit"], dynamo=False)
